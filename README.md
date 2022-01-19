@@ -22,6 +22,7 @@ DFK Automatic Questing
 - blocks : Number of block you wish your gardenenr and miners to stop their quests (maximizes Jackpot, e.g. 15 or "MAX" for the full quest)
 - computer_username : Your computer username (e.g. "Gok", for Windows only)
 - computer_password : User's password (e.g. "mypassword", for Windows only)
+- interval : The number of minutes for when to run the script (e.g. run the script every minutes)
 
 ```{"user": "Tomas", "rpc": "https://api.fuzz.fi/", "private_dict_path": "C://abl.pickled_dict.pk", "os": "windows", "pools": ["JEWEL-ONE"], "address": "0xC5375B0A1Da8933c94b7d6d537FEb2c4C80d9347", "blocks": "MAX", "computer_username": "Gok", "computer_password": "pass"}```
 
