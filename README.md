@@ -8,7 +8,7 @@ DFK Automatic Questing
 - rpc : Your preferred rpc (e.g. "https://api.fuzz.fi/")
 - private_dict_path : Path to a pickled dictionnary (your can create this with these commance from command line)
 
-```pyton```
+```python```
 
 ```import pickle```
 
