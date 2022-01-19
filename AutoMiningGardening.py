@@ -25,13 +25,19 @@ class SlowQuest(UserWeb3):
         quests_df['current_time'] = time.time()
     
         # Find which quest are ready to be completed.
-        quests_df["elapse"] = quests_df['current_time'] - quests_df["start_time"]
-        isDone = (quests_df["elapse"]/60) >= (self.blocks * 10)
+        if self.blocks == "MAX":
+            isDone = (quests_df['current_time'] - quests_df["completed_time"]) > 0
+        else:
+            quests_df["elapse"] = quests_df['current_time'] - quests_df["start_time"]
+            isDone = (quests_df["elapse"]/60) >= (self.blocks * 10)
         
         # Complete the quests that are done.
         if isDone.any():
             for heroes in quests_df.loc[isDone, "heroes"].values:
-                tx_receipt = self.quest_routine(heroes, "cancel")
+                if self.blocks == "MAX":
+                    tx_receipt = self.quest_routine(heroes, "complete")
+                else:
+                    tx_receipt = self.quest_routine(heroes, "cancel")
     
     def start(self, profession):
         # Get current quests.
