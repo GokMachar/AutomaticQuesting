@@ -6,4 +6,5 @@
 "address": "",
 "blocks": 16,
 "computer_username": "",
-"computer_password": ""}
+"computer_password": "",
+"interval": 1}
