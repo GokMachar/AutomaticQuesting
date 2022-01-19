@@ -6,6 +6,7 @@ Setup the automatic questing
 """
 import sys
 import os
+import datetime
 import json
 import pickle
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -19,6 +20,9 @@ OS = user_define_parameters["os"]
 POOLS = user_define_parameters["pools"]
 ADDRESS = user_define_parameters["address"]
 BLOCKS = user_define_parameters["blocks"]
+INTERVAL = user_define_parameters["interval"]
+COMPUTER_USERNAME = user_define_parameters["computer_username"]
+PASSWORD = user_define_parameters["computer_password"]
 
 def metadata_setup():
     # Create empty folder for the user.
@@ -69,20 +73,19 @@ fast.start("foraging")
     file.close() 
 
 def setup_scheduler_script():
+    # Create a bat file for windows scheduler to run.
     if OS == "windows":
         file = open(f"{__location__}/{USER}/{USER}_quest_schedule.bat", "w") 
         file.write(f"""start {sys.executable} {__location__}\{USER}\{USER}_quest.py""") 
         file.close() 
+        
+        # Create a task in the scheduler.
+        os.system(fr'schtasks /create /sc minute /mo {INTERVAL} /tn "{USER}_quest_schedule" /tr {__location__}\{USER}\{USER}_quest_schedule.bat /ru {COMPUTER_USERNAME} /rp {PASSWORD} /rl HIGHEST')
     else:
         print("No need for .bat on linux")
 
 def setup_crontab():
     print("Wait")
-
-
-
-
-
 
 
 
