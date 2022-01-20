@@ -1,7 +1,8 @@
 # AutomaticQuesting
 DFK Automatic Questing 
 
-# Doesn't work on hero in the tavern
+# Intstallations
+-Install anaconda
 
 # How to set up the json.
 - user : Your user name (e.g. "Tomas")
@@ -37,3 +38,5 @@ Setup a user after changing user_defined_parameters.json with your personall dat
 
 # Contributions
 ABI and other idea taken from https://github.com/0rtis/dfk
+
+# Doesn't work on hero in the tavern
