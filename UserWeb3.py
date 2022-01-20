@@ -50,6 +50,8 @@ class UserWeb3:
         self.gas_price = self.w3.eth.gas_price
         self.method_dict = {"start": self.start_quest, "start_w_data": self.start_quest_with_data,
                             "cancel": self.cancel_quest, "complete": self.complete_quest}
+        account = self.w3.eth.account.privateKeyToAccount(self.private_key)
+        self.w3.eth.default_account = account.address
 
         # Set up contracts.
         self.contracts = {}
@@ -165,6 +167,26 @@ class UserWeb3:
                 print("Unsuccesfull")
         return tx_receipt    
     
+    def unlist_hero(self, hero_id):
+        """ Get the heroes for a specific address (not in tavern) """
+        self.logger.info(f"Unlisting hero {hero_id} from the tavern")
+        tx = self.contracts['auction'].functions.cancelAuction(hero_id).buildTransaction({
+            'gasPrice': self.gas_price,
+            'nonce': self.w3.eth.get_transaction_count(self.address),
+            'from': self.address})
+        return self.log_transaction(tx)  
+    
+    def list_hero(self, hero_id, price):
+        """ Get the heroes for a specific address (not in tavern) """
+        self.logger.info(f"Listing hero {hero_id} in the tavern")
+        price_wei = self.w3.toWei(price, "ether")
+        list_inputs = [hero_id, price_wei, price_wei, 60, EMPTY_ADDRESS]
+        tx = self.contracts['auction'].functions.createAuction(*list_inputs).buildTransaction({
+            'gasPrice': self.gas_price,
+            'nonce': self.w3.eth.get_transaction_count(self.address),
+            'from': self.address})
+        return self.log_transaction(tx)  
+    
     def get_user_heroes(self):
         """ Get the heroes for a specific address (not in tavern) """
         heroes = self.contracts['hero'].functions.getUserHeroes(self.address).call()
@@ -204,9 +226,9 @@ class UserWeb3:
             
         # Add identifier for heroes in the tavern.
         for i in heroes:
-            data_dict["onSale"].append(False)
+            data_dict["onSales"].append(False)
         for i in heroes_on_auction:
-            data_dict["onSale"].append(True)
+            data_dict["onSales"].append(True)
             
         # Create a the hero DataFrame.
         hero_data = pd.DataFrame(data_dict)
@@ -216,7 +238,7 @@ class UserWeb3:
         
         # Get the current stamina of heroes.
         hero_data["staminaFullAtTime"] = pd.to_datetime(hero_data.staminaFullAt, unit='s') 
-        hero_data['time'] = hero_data["staminaFullAtTime"] - pd.to_datetime("now")
+        hero_data['time'] = hero_data["staminaFullAtTime"] - pd.to_datetime('now') 
         condition = hero_data['time'] < pd.Timedelta(days = 0)
         hero_data["current_stamina"] = 0
         hero_data.loc[condition, "current_stamina"] = hero_data.loc[condition, "stamina"]
