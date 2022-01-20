@@ -56,17 +56,13 @@ current = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.dirname(current))
 from AutoForagingFishing import FastQuest 
 from AutoMiningGardening import SlowQuest
-
 user = "{USER}"
 fast = FastQuest(user)
 slow = SlowQuest(user, "{BLOCKS}")
-
 fast.complete_all_quest()
 slow.complete_all_quest()
-
 slow.start("mining")
 slow.start("gardening")
-
 fast.start("fishing")
 fast.start("foraging")
 """) 
@@ -86,7 +82,3 @@ def setup_scheduler_script():
 
 def setup_crontab():
     print("Wait")
-
-
-
-

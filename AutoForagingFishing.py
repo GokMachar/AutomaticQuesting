@@ -19,7 +19,7 @@ class FastQuest(UserWeb3):
         # Get the current quests.
         quests_df = self.get_current_quests()
 
-        if not quests_df.empty:
+        if quests_df is not None:
             # Format the time to know when is the completion time of the quests.
             quests_df['current_time'] = time.time()
 
@@ -35,7 +35,7 @@ class FastQuest(UserWeb3):
         # Get current quests.
         quests_df = self.get_current_quests()
         
-        if not quests_df.empty:
+        if quests_df is not None:
             # Only keep profession quest.
             quests_df = quests_df.loc[quests_df.quest_type == profession, :]
         
@@ -43,7 +43,7 @@ class FastQuest(UserWeb3):
         hero_data = self.get_heroes_data()
         
         # If heroes are already questing, take them out of the hero_data.
-        if not quests_df.empty:
+        if quests_df is not None:
             areQuesting = list(chain.from_iterable(quests_df.heroes.tolist()))
             hero_data = hero_data.loc[~hero_data.id.isin(areQuesting), :]
         
@@ -63,6 +63,3 @@ class FastQuest(UserWeb3):
             for g in gangs:
                 # Start quests.
                 tx_receipt = self.quest_routine(g, "start", profession, self.MAX_ATTEMPTS)
-
-        
-        
