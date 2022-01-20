@@ -18,26 +18,27 @@ class SlowQuest(UserWeb3):
         # Get the current quests.
         quests_df = self.get_current_quests()
 
-        # Only keep gardening and mining quest.
-        quests_df = quests_df.loc[quests_df.quest_type.isin(["mining", "gardening"]), :]
+        if not quests_df.empty:
+            # Only keep gardening and mining quest.
+            quests_df = quests_df.loc[quests_df.quest_type.isin(["mining", "gardening"]), :]
 
-        # Format the time to know when is the completion time of the quests.
-        quests_df['current_time'] = time.time()
-    
-        # Find which quest are ready to be completed.
-        if self.blocks == "MAX":
-            isDone = (quests_df['current_time'] - quests_df["completed_time"]) > 0
-        else:
-            quests_df["elapse"] = quests_df['current_time'] - quests_df["start_time"]
-            isDone = (quests_df["elapse"]/60) >= (self.blocks * 10)
-        
-        # Complete the quests that are done.
-        if isDone.any():
-            for heroes in quests_df.loc[isDone, "heroes"].values:
-                if self.blocks == "MAX":
-                    tx_receipt = self.quest_routine(heroes, "complete")
-                else:
-                    tx_receipt = self.quest_routine(heroes, "cancel")
+            # Format the time to know when is the completion time of the quests.
+            quests_df['current_time'] = time.time()
+
+            # Find which quest are ready to be completed.
+            if self.blocks == "MAX":
+                isDone = (quests_df['current_time'] - quests_df["completed_time"]) > 0
+            else:
+                quests_df["elapse"] = quests_df['current_time'] - quests_df["start_time"]
+                isDone = (quests_df["elapse"]/60) >= (self.blocks * 10)
+
+            # Complete the quests that are done.
+            if isDone.any():
+                for heroes in quests_df.loc[isDone, "heroes"].values:
+                    if self.blocks == "MAX":
+                        tx_receipt = self.quest_routine(heroes, "complete")
+                    else:
+                        tx_receipt = self.quest_routine(heroes, "cancel")
     
     def start(self, profession):
         # Get current quests.
