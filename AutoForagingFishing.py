@@ -35,8 +35,9 @@ class FastQuest(UserWeb3):
         # Get current quests.
         quests_df = self.get_current_quests()
         
-        # Only keep profession quest.
-        quests_df = quests_df.loc[quests_df.quest_type == profession, :]
+        if not quests_df.empty:
+            # Only keep profession quest.
+            quests_df = quests_df.loc[quests_df.quest_type == profession, :]
         
         # Load the hero data to know the stamina of heroes.
         hero_data = self.get_heroes_data()
