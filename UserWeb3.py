@@ -34,11 +34,6 @@ EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000"
 class UserWeb3:
     
     def __init__(self, user):
-        # Setup the autoquester metadata, autoquest_script and bat file.
-        metadata_setup()
-        setup_script()
-        setup_scheduler_script()
-        
         # Load.
         autoquester_meta = pickle.load(open(f"{__location__}/{user}/{user}_meta.pk", "rb"))
         private_dict = pickle.load(open(autoquester_meta["private_dict_path"], "rb"))
