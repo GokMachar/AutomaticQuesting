@@ -19,16 +19,17 @@ class FastQuest(UserWeb3):
         # Get the current quests.
         quests_df = self.get_current_quests()
 
-        # Format the time to know when is the completion time of the quests.
-        quests_df['current_time'] = time.time()
-    
-        # Look which quest are already done.
-        isDone = (quests_df['current_time'] - quests_df["completed_time"]) > 0
+        if not quests_df.empty:
+            # Format the time to know when is the completion time of the quests.
+            quests_df['current_time'] = time.time()
 
-        if isDone.any():
-            # Complete the quests that are done.
-            for heroes in quests_df.loc[isDone, "heroes"].values:
-                tx_receipt = self.quest_routine(heroes, "complete")       
+            # Look which quest are already done.
+            isDone = (quests_df['current_time'] - quests_df["completed_time"]) > 0
+
+            if isDone.any():
+                # Complete the quests that are done.
+                for heroes in quests_df.loc[isDone, "heroes"].values:
+                    tx_receipt = self.quest_routine(heroes, "complete")       
 
     def start(self, profession):
         # Get current quests.
