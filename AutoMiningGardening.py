@@ -5,6 +5,7 @@ Automatic questing for mining and gardening quest (only mining)
 @author: Gok
 """
 import time
+import pandas as pd
 from itertools import chain
 from UserWeb3 import UserWeb3
 
@@ -47,44 +48,46 @@ class SlowQuest(UserWeb3):
         if quests_df is not None:
             # Only keep profession quest.
             quests_df = quests_df.loc[quests_df.quest_type == profession, :]
+        else:
+            quests_df = pd.DataFrame()
+            
+        # Only start if there aren't heroes on the quest.
+        if quests_df.empty:
         
-            # Only start if there aren't heroes on the quest.
-            if quests_df.empty:
+            # Load the hero data to know the stamina of heroes.
+            hero_data = self.get_heroes_data()
             
-                # Load the hero data to know the stamina of heroes.
-                hero_data = self.get_heroes_data()
-                
-                # If heroes are already questing, take them out of the hero_data.
-                if not quests_df.empty:
-                    areQuesting = list(chain.from_iterable(quests_df.heroes.tolist()))
-                    hero_data = hero_data.loc[~hero_data.id.isin(areQuesting), :]
-                
-                # Look which heroes have more then self.blocks.
-                isReady = hero_data.current_stamina > self.blocks
+            # If heroes are already questing, take them out of the hero_data.
+            if not quests_df.empty:
+                areQuesting = list(chain.from_iterable(quests_df.heroes.tolist()))
+                hero_data = hero_data.loc[~hero_data.id.isin(areQuesting), :]
             
-                # Sort by profession level, to get the best miner/gardener first.
-                hero_data = hero_data.sort_values(profession, ascending = False)
+            # Look which heroes have more then self.blocks.
+            isReady = hero_data.current_stamina > self.blocks
+        
+            # Sort by profession level, to get the best miner/gardener first.
+            hero_data = hero_data.sort_values(profession, ascending = False)
 
-                # Find gangs.
-                isProfession = hero_data.profession == profession
-                hero_data = hero_data.loc[isReady & isProfession, :]
+            # Find gangs.
+            isProfession = hero_data.profession == profession
+            hero_data = hero_data.loc[isReady & isProfession, :]
+            
+            # Select the first hero then sort ascendingly, so only the lead
+            # is always as best as possible for all rotation.            
+            hero_ids = hero_data.id.tolist()[:1]
+            
+            # Will be changed once gardening takes 6 heroes as well.
+            if profession == "mining":
+                # Drop the first row not to have duplicates.
+                hero_data = hero_data.iloc[1:, :]
+            
+                # Sort by profession level, to get the worst miner/gardener first.
+                hero_data = hero_data.sort_values(profession, ascending = True)
                 
-                # Select the first hero then sort ascendingly, so only the lead
-                # is always as best as possible for all rotation.            
-                hero_ids = hero_data.id.tolist()[:1]
-                
-                # Will be changed once gardening takes 6 heroes as well.
-                if profession == "mining":
-                    # Drop the first row not to have duplicates.
-                    hero_data = hero_data.iloc[1:, :]
-                
-                    # Sort by profession level, to get the worst miner/gardener first.
-                    hero_data = hero_data.sort_values(profession, ascending = True)
-                    
-                    # Add the rest fo the heroes.
-                    hero_ids.extend(hero_data.id.tolist()[:5])
+                # Add the rest fo the heroes.
+                hero_ids.extend(hero_data.id.tolist()[:5])
 
-                # Start the quest.
-                if hero_ids:
-                    method = "start" if profession == "mining" else "start_w_data"
-                    tx_receipt = self.quest_routine(hero_ids, method, profession, 1)
+            # Start the quest.
+            if hero_ids:
+                method = "start" if profession == "mining" else "start_w_data"
+                tx_receipt = self.quest_routine(hero_ids, method, profession, 1)

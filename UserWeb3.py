@@ -175,16 +175,23 @@ class UserWeb3:
         auction = {"id": result[0], "owner": result[1], "startingPrice": result[2],
                    "endingPrice": result[3], "duration": result[4], "startedAt": result[5]}
         return auction
-    
+        
+    def get_user_auctions(self):
+        result = self.contracts['auction'].functions.getUserAuctions(self.address).call()
+        return result
+
     def get_heroes_data(self):
         # Get user's heroes.
         heroes = self.get_user_heroes()
+        
+        # Get user's heroes on sales.
+        heroes_on_auction = self.get_user_auctions()
         
         # Query directly from the rpc to update the stamina of heroes.
         data_dict = defaultdict(list)
         
         # Loop over heroes to get their information.
-        for i in heroes:
+        for i in heroes + heroes_on_auction:
             hero_info = self.contracts["hero"].functions.getHero(i).call()
             data_dict["id"].append(i)
             data_dict["stamina"].append(hero_info[4][10])
@@ -195,6 +202,12 @@ class UserWeb3:
             data_dict["foraging"].append(hero_info[7][2])
             data_dict["fishing"].append(hero_info[7][3])
             
+        # Add identifier for heroes in the tavern.
+        for i in heroes:
+            data_dict["onSale"].append(False)
+        for i in heroes_on_auction:
+            data_dict["onSale"].append(True)
+            
         # Create a the hero DataFrame.
         hero_data = pd.DataFrame(data_dict)
                                                  
@@ -203,7 +216,7 @@ class UserWeb3:
         
         # Get the current stamina of heroes.
         hero_data["staminaFullAtTime"] = pd.to_datetime(hero_data.staminaFullAt, unit='s') 
-        hero_data['time'] = hero_data["staminaFullAtTime"] - pd.to_datetime('now') 
+        hero_data['time'] = hero_data["staminaFullAtTime"] - pd.to_datetime("now")
         condition = hero_data['time'] < pd.Timedelta(days = 0)
         hero_data["current_stamina"] = 0
         hero_data.loc[condition, "current_stamina"] = hero_data.loc[condition, "stamina"]
