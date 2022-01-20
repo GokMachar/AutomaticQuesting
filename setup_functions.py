@@ -59,7 +59,7 @@ from AutoMiningGardening import SlowQuest
 
 user = "{USER}"
 fast = FastQuest(user)
-slow = SlowQuest(user, {BLOCKS})
+slow = SlowQuest(user, "{BLOCKS}")
 
 fast.complete_all_quest()
 slow.complete_all_quest()
