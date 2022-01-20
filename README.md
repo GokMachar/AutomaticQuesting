@@ -2,7 +2,7 @@
 DFK Automatic Questing 
 
 # Intstallations
--Install anaconda
+-Install miniconda (google it)
 
 # How to set up the json.
 - user : Your user name (e.g. "Tomas")
