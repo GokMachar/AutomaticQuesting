@@ -12,7 +12,7 @@ class SlowQuest(UserWeb3):
     
     def __init__(self, user, blocks = 16):
         UserWeb3.__init__(self, user)
-        self.blocks = blocks
+        self.blocks = blocks if blocks == "MAX" else int(blocks)
         
     def complete_all_quest(self):
         # Get the current quests.
