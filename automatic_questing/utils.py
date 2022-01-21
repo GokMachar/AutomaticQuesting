@@ -1,9 +1,10 @@
-
 import json
 
 FAIL_ON_NOT_FOUND = False
 
 ALPHABET = '123456789abcdefghijkmnopqrstuvwx'
+
+
 
 rarity = {
     0: "common",
@@ -89,6 +90,28 @@ elements = {
     12: 'light',
     14: 'dark',
 }
+
+POOLS = [
+    "JEWEL-ONE",
+    "JEWEL-BUSD",
+    "JEWEL-bscBNB",
+    "JEWEL-1ETH",
+    "ONE-BUSD",
+    "JEWEL-XYA",
+    "JEWEL-1USDC",
+    "JEWEL-1WBTC",
+    "JEWEL-UST",
+    "ONE-1ETH",
+    "ONE-1USDC",
+    "1WBTC-1ETH",
+    "JEWEL-1SUPERBID",
+    "ONE-1SUPERBID",
+    "JEWEL-MIS",
+    "JEWEL-AVAX",
+    "JEWEL-FTM",
+    "JEWEL-LUNA",
+    "JEWEL-MATIC",
+]
 
 
 def parse_rarity(id):
